@@ -19,7 +19,7 @@ export function TaskDetail() {
 
   const navigateToList = () => navigate('/');
 
-  if (isLoading) return <p>Đang tải thông tin task...</p>;
+  if (isLoading) return <p>Loading tasks...</p>;
   if (isError) return <p>Load data failed: {(error as Error).message}</p>;
 
   return (

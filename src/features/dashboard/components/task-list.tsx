@@ -1,7 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchTasksAsync } from '../api/task-api';
-import { TaskItem } from './task-item';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchTasksAsync, removeTaskAsync } from '../api/task-api';
+import { TaskListItem } from './task-item';
 import { TaskFilter, type FilterTypes } from './task-filter';
+import { Loading } from '../../../components/ui/loading';
+import { useState } from 'react';
+import { Modal } from '../../../components/ui/modal';
+import { TaskForm } from './task-form';
 
 interface TaskListProps {
   currentFilter: FilterTypes;
@@ -26,6 +30,17 @@ export function TaskList({ currentFilter, onFilterChange }: TaskListProps) {
   //     }, 1500);
   //   }, []);
 
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [activeTaskId, setActiveTaskId] = useState<number>(0);
+  const queryClient = useQueryClient();
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: removeTaskAsync,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+
   const {
     data: tasks = [],
     isLoading,
@@ -36,7 +51,7 @@ export function TaskList({ currentFilter, onFilterChange }: TaskListProps) {
     queryFn: fetchTasksAsync,
   });
 
-  if (isLoading) return <p>Đang tải dữ liệu từ TanStack Query...</p>;
+  if (isLoading) return <Loading />;
   if (isError) return <p>Lỗi: {(error as Error).message}</p>;
 
   //   const filteredTasks = tasks.filter((task) => {
@@ -53,8 +68,32 @@ export function TaskList({ currentFilter, onFilterChange }: TaskListProps) {
   // Xử lý toggle hoàn thành
   const handleToggle = (id: number) => {};
 
+  // Show delete modal
+  const showDeleteModal = (id: number) => {
+    return (
+      <Modal
+        title="Are you sure you want delete this item?"
+        onClose={() => setOpenDeleteModal(false)}
+        open={openDeleteModal}
+        onSubmit={handleDelete}
+        customSubmitTitle="Delete"
+        customSubmitClass="btn-danger"
+      >
+        <p>This action is permanent and cannot be undone.</p>
+      </Modal>
+    );
+  };
+
   // Xử lý xóa task
-  const handleDelete = (id: number) => {};
+  const onShowDeleteModal = (id: number) => {
+    setActiveTaskId(id);
+    setOpenDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    deleteTaskMutation.mutate(activeTaskId);
+    setOpenDeleteModal(false);
+  };
 
   return (
     <section>
@@ -71,11 +110,12 @@ export function TaskList({ currentFilter, onFilterChange }: TaskListProps) {
                   />
                   <h2 className="my-4 text-dark">Task List</h2>
                 </div>
-                <div className="d-flex justify-content-end mb-5">
+                <div className="d-flex justify-content-end mb-5 gap-2">
                   <TaskFilter
                     currentFilter={currentFilter}
                     onFilterChange={onFilterChange}
                   />
+                  <TaskForm />
                 </div>
                 {isLoading ? (
                   <p>Loading tasks...</p>
@@ -96,17 +136,18 @@ export function TaskList({ currentFilter, onFilterChange }: TaskListProps) {
                         <p>Empty, let's create a task!</p>
                       ) : (
                         tasks.map((task) => (
-                          <TaskItem
+                          <TaskListItem
                             key={task.id}
                             task={task}
                             onToggle={handleToggle}
-                            onDelete={handleDelete}
+                            onDelete={onShowDeleteModal}
                           />
                         ))
                       )}
                     </tbody>
                   </table>
                 )}
+                {openDeleteModal ? showDeleteModal(activeTaskId) : ''}
               </div>
             </div>
           </div>

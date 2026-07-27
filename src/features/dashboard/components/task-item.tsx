@@ -1,13 +1,37 @@
-import type { TaskItem } from '../types/TaskItem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { TaskItem, TaskPriority } from '../types/TaskItem';
+import { faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-// Concept: Component receives props (read-only) and render UI
+interface PriorityColor {
+  priority: TaskPriority;
+  color: string;
+}
 interface TaskItemProps {
   task: TaskItem;
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
-export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
+export function TaskListItem({ task, onToggle, onDelete }: TaskItemProps) {
+  const priorityColors: PriorityColor[] = [
+    {
+      priority: 'High',
+      color: '#DC4C64',
+    },
+    {
+      priority: 'Middle',
+      color: '#E4A11B',
+    },
+    {
+      priority: 'Low',
+      color: '#14a44d',
+    },
+  ];
+
+  const resolvePriority = (priority: TaskPriority | undefined) => {
+    return priorityColors.find((p) => p.priority == priority);
+  };
+
   return (
     <tr className="fw-normal">
       <th>
@@ -23,7 +47,14 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
       </td>
       <td className="align-middle">
         <h6 className="mb-0">
-          <span className="badge bg-danger">{task.priority} priority</span>
+          <span
+            className="badge"
+            style={{
+              backgroundColor: resolvePriority(task.priority)?.color,
+            }}
+          >
+            {task.priority}
+          </span>
         </h6>
       </td>
       <td className="align-middle">
@@ -33,7 +64,7 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
           title="Done"
           onClick={() => onToggle(task.id)}
         >
-          <i className="fas fa-check fa-lg text-success me-3"></i>
+          <FontAwesomeIcon icon={faCheck} className="text-success me-3" />
         </a>
         <a
           href="#!"
@@ -41,7 +72,7 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
           title="Remove"
           onClick={() => onDelete(task.id)}
         >
-          <i className="fas fa-trash-alt fa-lg text-warning"></i>
+          <FontAwesomeIcon icon={faTrash} size="lg" className="text-warning" />
         </a>
       </td>
     </tr>

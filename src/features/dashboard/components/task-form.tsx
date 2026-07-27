@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { addTaskAsync } from '../api/task-api';
+import { Modal } from '../../../components/ui/modal';
 
 export function TaskForm() {
   const [input, setInput] = useState('');
+  const [open, setOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -16,9 +18,7 @@ export function TaskForm() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     if (input.trim() === '') {
       alert('Vui lòng nhập tiêu đề task');
       return;
@@ -26,19 +26,37 @@ export function TaskForm() {
 
     addTaskMutation.mutate(input.trim());
     setInput('');
+    setOpen(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '15px' }}>
-      <input
-        type="text"
-        placeholder="Enter a new task..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button type="submit" disabled={addTaskMutation.isPending}>
-        {addTaskMutation.isPending ? 'Đang tạo...' : 'Thêm task'}
+    <>
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={() => setOpen(true)}
+      >
+        Create Task
       </button>
-    </form>
+
+      <Modal
+        title="Create new task"
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={() => handleSubmit()}
+      >
+        <form>
+          <div className="mb-3">
+            <label className="form-label">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </div>
+        </form>
+      </Modal>
+    </>
   );
 }

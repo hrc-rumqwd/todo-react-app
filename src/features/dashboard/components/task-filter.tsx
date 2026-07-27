@@ -14,29 +14,23 @@ export function TaskFilter({ currentFilter, onFilterChange }: TaskFilterProps) {
   return (
     <div className="dropdown">
       <button
-        className="btn btn-primary dropdown-toggle"
+        className="btn btn-secondary dropdown-toggle"
         type="button"
         id="dropdownMenuButton"
         data-bs-toggle="dropdown"
-        aria-haspopup="true"
         aria-expanded="false"
       >
         {resolveTypeTitle()}
       </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      <ul className="dropdown-menu">
         {(['all', 'active', 'completed'] as FilterTypes[]).map((type) => (
           <li>
             <a
               className="dropdown-item"
               href="#"
               onClick={() => onFilterChange(type)}
-              style={{
-                fontWeight: currentFilter === type ? 'bold' : 'normal',
-                backgroundColor:
-                  currentFilter === type ? '#ddd' : 'transparent',
-              }}
             >
-              {type}
+              {type.toUpperCase()}
             </a>
           </li>
         ))}

@@ -8,4 +8,5 @@ export interface TaskItem {
 }
 
 export type TaskStatus = 'New' | 'In Progress' | 'Pending' | 'Done';
+
 export type TaskPriority = 'Low' | 'Middle' | 'High';
