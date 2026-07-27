@@ -1,15 +1,18 @@
-import { Route, Routes, BrowserRouter, useParams } from "react-router-dom";
-import { TaskListPage } from "./components/TaskListPage";
-import { TaskDetailPage } from "./components/TaskDetailPage";
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
+import { Dashboard } from './pages/Dashboard';
+import { TaskDetail } from './pages/TaskDetail';
+import { MainLayout } from './layouts/MainLayout';
 
 export function AppRouter() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<TaskListPage />} />
-        {/* Không truyền prop id ở đây nữa */}
-        <Route path="/details/:id" element={<TaskDetailPage />} />
-      </Routes>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          {/* Không truyền prop id ở đây nữa */}
+          <Route path="/details/:id" element={<TaskDetail />} />
+        </Routes>
+      </MainLayout>
     </BrowserRouter>
   );
 }
