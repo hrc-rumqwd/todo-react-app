@@ -1,31 +1,23 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { addTaskAsync } from '../api/task-api';
 import { Modal } from '../../../components/ui/modal';
+import { priorityColors, type TaskItem } from '../types/TaskItem';
+import { useCreateTaskMutation } from '../api/useCreateTaskMutation';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 
 export function TaskForm() {
-  const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    // formState: { errors },
+  } = useForm<TaskItem>();
 
-  const queryClient = useQueryClient();
+  const addTaskMutation = useCreateTaskMutation();
 
-  const addTaskMutation = useMutation({
-    mutationFn: addTaskAsync,
-    onSuccess: () => {
-      // Làm hỏng cache ["tasks"] cũ => trigger query tự  fetch lại data
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      console.log('Đã invalidate key tasks');
-    },
-  });
+  const onSubmit: SubmitHandler<TaskItem> = (data, e) => {
+    e?.preventDefault();
+    addTaskMutation.mutate(data);
 
-  const handleSubmit = () => {
-    if (input.trim() === '') {
-      alert('Vui lòng nhập tiêu đề task');
-      return;
-    }
-
-    addTaskMutation.mutate(input.trim());
-    setInput('');
     setOpen(false);
   };
 
@@ -43,7 +35,7 @@ export function TaskForm() {
         title="Create new task"
         open={open}
         onClose={() => setOpen(false)}
-        onSubmit={() => handleSubmit()}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <form>
           <div className="mb-3">
@@ -51,9 +43,22 @@ export function TaskForm() {
             <input
               type="text"
               className="form-control"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
+              {...register('title')}
             />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Priority</label>
+            <select
+              className="form-select"
+              aria-label="Default select example"
+              {...register('priority')}
+            >
+              {priorityColors.map((t) => (
+                <option key={t.priority} value={t.priority}>
+                  {t.priority}
+                </option>
+              ))}
+            </select>
           </div>
         </form>
       </Modal>

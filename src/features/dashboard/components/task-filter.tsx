@@ -4,10 +4,9 @@ interface TaskFilterProps {
   onFilterChange: (filter: FilterTypes) => void;
 }
 export function TaskFilter({ currentFilter, onFilterChange }: TaskFilterProps) {
-  const resolveTypeTitle = () => {
-    if (currentFilter == 'all') return 'All';
-    else if (currentFilter == 'active') return 'Active';
-
+  const resolveTypeTitle = (filter: FilterTypes) => {
+    if (filter == 'all') return 'All';
+    else if (filter == 'active') return 'Active';
     return 'Completed';
   };
 
@@ -20,17 +19,17 @@ export function TaskFilter({ currentFilter, onFilterChange }: TaskFilterProps) {
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        {resolveTypeTitle()}
+        {resolveTypeTitle(currentFilter)}
       </button>
       <ul className="dropdown-menu">
         {(['all', 'active', 'completed'] as FilterTypes[]).map((type) => (
-          <li>
+          <li key={type}>
             <a
               className="dropdown-item"
               href="#"
               onClick={() => onFilterChange(type)}
             >
-              {type.toUpperCase()}
+              {resolveTypeTitle(type)}
             </a>
           </li>
         ))}

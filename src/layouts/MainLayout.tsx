@@ -1,10 +1,13 @@
+import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
+import { ToastContainer } from 'react-toastify';
 
-export function MainLayout({ children }) {
+export function MainLayout() {
   return (
     <div className="vh-100 gradient-custom-2">
       <Navbar />
-      {children}
+      <Outlet />
+      <ToastContainer />
     </div>
   );
 }

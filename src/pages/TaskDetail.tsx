@@ -1,20 +1,15 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchTaskByIdAsync } from '../features/dashboard/api/task-api';
+import { fetchTaskDetail } from '../features/dashboard/api/useFetchTaskDetail';
 
 export function TaskDetail() {
   // Lấy parameter từ URL xuống
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   // In a real application, you would fetch the task details based on the ID
-  const {
-    data: task = {},
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['task', id],
-    queryFn: () => fetchTaskByIdAsync(Number(id)),
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['task-detail', id],
+    queryFn: () => fetchTaskDetail(Number(id)),
   });
 
   const navigateToList = () => navigate('/');
@@ -27,13 +22,10 @@ export function TaskDetail() {
       <button onClick={() => navigateToList()}>Quay lại danh sách</button>
       <h1>Task Detail</h1>
       <p>
-        <strong>ID:</strong> {task.id}
+        <strong>ID:</strong> {data?.id}
       </p>
       <p>
-        <strong>Title:</strong> {task.title}
-      </p>
-      <p>
-        <strong>Status:</strong> {task.completed ? 'Completed' : 'Active'}
+        <strong>Title:</strong> {data?.title}
       </p>
     </div>
   );

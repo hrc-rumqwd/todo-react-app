@@ -1,3 +1,69 @@
+:root {
+  --hover-bg-color: rgba(126, 64, 246, 1);
+  --color-primary-gradient: linear-gradient(
+    to right,
+    rgba(126, 64, 246, 1),
+    rgba(80, 139, 252, 1)
+  );
+  --color-main: rgba(126, 64, 246, 1);
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-light: #eef2ff;
+  --color-primary-white: #fff;
+
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+
+  --bs-btn-hover-color: var(--color-primary-hover);
+  --bs-btn-active-color: var(--color-primary-hover);
+}
+
+.bg-app-primary {
+  background-color: var(--color-main) !important;
+}
+
+.bg-app-primary-gradient {
+  background: var(--color-primary-gradient) !important;
+}
+
+.bg-app-primary-white {
+  background-color: var(--color-primary-white) !important;
+}
+
+.bg-app-primary-light {
+  background-color: var(--color-primary-light) !important;
+}
+
+.dropdown-link-primary {
+  transition: ease 0.3s all !important;
+}
+
+.dropdown-link-primary:hover {
+  background-color: var(--color-main) !important;
+  color: var(--color-primary-light) !important;
+}
+
+.dropdown-link-primary-gradient:hover {
+  background: var(--color-primary-gradient);
+  color: var(--color-primary-light) !important;
+}
+
+.transition-03 {
+  transition: ease 0.3s all !important;
+}
+
+.transition-05 {
+  transition: ease 0.5s all !important;
+}
+
+.dropdown-item:hover {
+  font-weight: bold !important;
+}
+
+.app-text-light {
+  color: var(--color-primary-light) !important;
+}
+
 .gradient-custom-2 {
   /* fallback for old browsers */
   background: #7e40f6;
@@ -24,4 +90,27 @@
   border: 2px solid rgba(255, 255, 255, 0.05);
   background-clip: padding-box;
   box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+}
+
+.task-item * {
+  transition: background-color 0.3s ease-in-out;
+}
+
+.task-item:hover th,
+.task-item:hover td {
+  background-color: var(--hover-bg-color);
+}
+
+.task-item:hover span,
+.task-item:hover a,
+.task-item:hover p {
+  color: var(--color-primary-light) !important;
+}
+
+.task-item:hover svg#doneBtn {
+  color: #88e788 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

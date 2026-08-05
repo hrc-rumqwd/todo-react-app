@@ -1,12 +1,34 @@
 export interface TaskItem {
-  id: number;
+  id?: number;
   title: string;
   description?: string | null;
   status?: TaskStatus;
-  completed: boolean;
   priority?: TaskPriority;
+  authorName: string;
 }
 
-export type TaskStatus = 'New' | 'In Progress' | 'Pending' | 'Done';
+export type TaskStatus = 'New' | 'InProgress' | 'Pending' | 'Done';
 
-export type TaskPriority = 'Low' | 'Middle' | 'High';
+export type TaskPriority = 'Low' | 'Medium' | 'High';
+
+interface PriorityColor {
+  priority: TaskPriority;
+  color: string;
+}
+
+export const priorityColors: PriorityColor[] = [
+  {
+    priority: 'High',
+    color: '#DC4C64',
+  },
+  {
+    priority: 'Medium',
+    color: '#E4A11B',
+  },
+  {
+    priority: 'Low',
+    color: '#14a44d',
+  },
+];
+
+export const TaskItemsQueryKey = 'tasks';
