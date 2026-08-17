@@ -6,6 +6,8 @@ import {
   type TokenSession,
   type SignUpContract,
   type SignUpResult,
+  type RefreshTokenContract,
+  type RefreshTokenResult,
 } from '../types/authentication';
 import { httpClient } from '../../../services/http-client';
 import { AccessTokenKey, RefreshTokenKey } from '../types/identity-query-keys';
@@ -58,6 +60,9 @@ export const login = async (input: LoginContract) => {
   if (response.refreshToken)
     localStorage.setItem(RefreshTokenKey, response.refreshToken);
 
+  if (response.accessTokenExpiry) {
+    scheduleRefreshToken(response.refreshToken, response.refreshTokenExpiry);
+  }
   return response;
 };
 
@@ -94,4 +99,36 @@ export const signUp = async (input: SignUpContract): Promise<SignUpResult> => {
     console.error(e);
     throw e;
   }
+};
+
+export const refreshToken = async (token: RefreshTokenContract) => {
+  const response = await httpClient.post<
+    RefreshTokenContract,
+    RefreshTokenResult
+  >('/token/refresh', token);
+
+  if (response.accessToken)
+    localStorage.setItem(AccessTokenKey, response.accessToken);
+
+  if (response.refreshToken)
+    localStorage.setItem(RefreshTokenKey, response.refreshToken);
+
+  if (response.accessTokenExpiry) {
+    scheduleRefreshToken(response.refreshToken, response.refreshTokenExpiry);
+  }
+};
+
+const scheduleRefreshToken = (
+  refreshTk: string | null | undefined,
+  expiryTime: Date
+) => {
+  const expiry = new Date(expiryTime);
+  const delay = expiry.getTime() - Date.now() - 30_000;
+
+  window.setTimeout(
+    async () => {
+      await refreshToken({ refreshToken: refreshTk });
+    },
+    Math.max(delay, 0)
+  );
 };

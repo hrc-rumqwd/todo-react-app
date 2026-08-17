@@ -1,12 +1,17 @@
+export interface TokenSession {
+  accessToken?: string | null;
+  refreshToken?: string | null;
+}
+
 export interface LoginContract {
   email: string;
   password: string;
   rememberMe: boolean;
 }
 
-export interface LoginResult {
-  accessToken: string;
-  refreshToken: string;
+export interface LoginResult extends TokenSession {
+  accessTokenExpiry: Date;
+  refreshTokenExpiry: Date;
 }
 
 export interface LoginCheckResult {
@@ -29,7 +34,11 @@ export interface LogoutContract {
   refreshToken?: string | null;
 }
 
-export interface TokenSession {
-  accessToken?: string | null;
+export interface RefreshTokenContract {
   refreshToken?: string | null;
+}
+
+export interface RefreshTokenResult extends TokenSession {
+  accessTokenExpiry: Date;
+  refreshTokenExpiry: Date;
 }
